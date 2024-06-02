@@ -1,103 +1,99 @@
 package com.BlogApplication.Service;
-import com.BlogApplication.Exceptions.ResourceNotFoundException;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.BlogApplication.Entity.User;
+import com.BlogApplication.Exceptions.ResourceNotFoundException;
+import com.BlogApplication.Exceptions.UserAlreadyExistException;
 import com.BlogApplication.Payload.UserDto;
 import com.BlogApplication.Repository.UserRepo;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService{
-	
-	@Autowired
-	private UserRepo userrepo;
-	
-	@Autowired
-	private ModelMapper modelMapper;
+public class UserServiceImpl implements UserService {
 
-	public User userDtoToUser(UserDto userdto) {
-		
-		User user = this.modelMapper.map(userdto, User.class);
-		
-//		User user = new User();
-//		user.setId(userdto.getId());
-//		user.setName(userdto.getName());
-//		user.setEmail(userdto.getEmail());
-//		user.setPassword(userdto.getPassword());
-//		user.setAbout(userdto.getAbout());
-		return user;
-		
-	}
-	
-public UserDto userDtoToUser(User user) {
-		
-	UserDto userdto = this.modelMapper.map(user, UserDto.class);
-	
-//		UserDto userdto = new UserDto();
-//		userdto.setId(user.getId());
-//		userdto.setName(user.getName());
-//		userdto.setEmail(user.getEmail());
-//		userdto.setPassword(user.getPassword());
-//		userdto.setAbout(user.getAbout());
-		return userdto;
-		
-	}
-	
-	
-	@Override
-	public UserDto createUser(UserDto userdto) {
-		
-		User user = this.userDtoToUser(userdto);
-		User savedUser = this.userrepo.save(user);
-		return this.userDtoToUser(savedUser);
-		
-	}
+    @Autowired
+    private UserRepo userRepo;
 
-	@Override
-	public UserDto updateUser(UserDto userDto, Integer userId) {
-		
-		User user = this.userrepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User", "Id", userId));
-		
-		user.setName(userDto.getName());
-		user.setEmail(userDto.getEmail());
-		user.setPassword(userDto.getPassword());
-		user.setAbout(userDto.getAbout());
-		
-		userrepo.save(user);
-		UserDto userDto1 = this.userDtoToUser(user);
-		
-		return userDto1;
-	}
+    @Autowired
+    private ModelMapper modelMapper;
 
-	@Override
-	public UserDto getUserById(Integer userId) {
-		User user = this.userrepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User", "Id", userId));
-		
-		return this.userDtoToUser(user);
-	}
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
-	@Override
-	public List<UserDto> getAllUsers() {
-		
-		List<User> users = this.userrepo.findAll();
-		List<UserDto> userDto = users.stream().map(user-> this.userDtoToUser(user)).collect(Collectors.toList());
-		return userDto;
-	}
+    private User userDtoToUser(UserDto userDto) {
+    	return modelMapper.map(userDto, User.class);
+		//        User user = new User();
+		//		  user.setId(userdto.getId());
+		//        user.setName(userDto.getName());
+		//        user.setEmail(userDto.getEmail());
+		//        user.setPassword(userDto.getPassword());
+		//        user.setAbout(userDto.getAbout());
+    }
 
-	@Override
-	public String deleteUser(Integer userId) {
-		
-		User user =	this.userrepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("user", "Id", userId));
-		this.userrepo.delete(user);
-		
-		return "User deleted!";
-	}
+    private UserDto userToUserDto(User user) {
+    	return modelMapper.map(user, UserDto.class);
+		//		UserDto userdto = new UserDto();
+		//		userdto.setId(user.getId());
+		//		userdto.setName(user.getName());
+		//		userdto.setEmail(user.getEmail());
+		//		userdto.setPassword(user.getPassword());
+		//		userdto.setAbout(user.getAbout());
+    }
 
-	
+    @Override
+    public UserDto createUser(UserDto userDto) {
+        // Check if a user with the given email already exists
+        Optional<User> existingUserOptional = userRepo.findByEmail(userDto.getEmail());
+        if (existingUserOptional.isPresent()) {
+            throw new UserAlreadyExistException("User with email " + userDto.getEmail() + " already exists");
+        }
+        
+        // Create the new user
+        User user = this.userDtoToUser(userDto);
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        User savedUser = this.userRepo.save(user);
+        return this.userToUserDto(savedUser);
+    }
 
+
+
+    @Override
+    public UserDto updateUser(UserDto userDto, Integer userId) {
+        User user = this.userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+        user.setAbout(userDto.getAbout());
+        if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        }
+        User updatedUser = this.userRepo.save(user);
+        return this.userToUserDto(updatedUser);
+    }
+
+    @Override
+    public UserDto getUserById(Integer userId) {
+        User user = this.userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+        return this.userToUserDto(user);
+    }
+
+    @Override
+    public List<UserDto> getAllUsers() {
+        List<User> users = this.userRepo.findAll();
+        return users.stream().map(this::userToUserDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteUser(Integer userId) {
+        User user = this.userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+        this.userRepo.delete(user);
+    }
 }

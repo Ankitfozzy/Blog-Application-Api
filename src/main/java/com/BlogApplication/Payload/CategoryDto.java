@@ -13,11 +13,11 @@ import lombok.Setter;
 public class CategoryDto {
 
 	private Integer categoryId;
-	
+
 	@NotBlank
-	@Size(min = 3, message ="Min size of category title is 3 Characters.")
+	@Size(min = 3, message = "Min size of category title is 3 Characters.")
 	private String categoryTitle;
-	
+
 	@NotBlank
 	private String categoryDescription;
 }

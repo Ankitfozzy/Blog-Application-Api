@@ -24,19 +24,20 @@ public class Post {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer postId;
-	
-	@Column( length = 100, nullable = false)
+
+	@Column(length = 100, nullable = false)
 	private String title;
-	
+
 	private String imageName;
-	
+
 	private String content;
-	
+
 	private Date addedDate;
-	
+
 	@ManyToOne
 	private Category category;
-	
+
 	@ManyToOne
 	private User user;
+	
 }

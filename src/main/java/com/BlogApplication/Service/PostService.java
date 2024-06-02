@@ -8,28 +8,28 @@ import com.BlogApplication.Payload.PostResponse;
 
 public interface PostService {
 
-	
-	//create post
+	// create post
 	PostDto createPost(PostDto postDto, Integer userId, Integer categoryId);
-	
-	//update post
+
+	// update post
 	PostDto updatePost(PostDto postDto, Integer postId);
-	
-	//delete post
+
+	// delete post
 	void deletePost(Integer postId);
-	
-	//get all posts
+
+	// get all posts
 	PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
-	
-	//get post by id
+
+	// get post by id
 	PostDto getPostById(Integer postId);
-	
-	//get all posts by category
+
+	// get all posts by category
 	List<PostDto> getPostsByCategory(Integer categoryId);
-	
-	//get all posts by user
+
+	// get all posts by user
 	List<PostDto> getPostsByUser(Integer userId);
-	
-	//search posts
+
+	// search posts
 	List<PostDto> searchPosts(String keyword);
+	
 }

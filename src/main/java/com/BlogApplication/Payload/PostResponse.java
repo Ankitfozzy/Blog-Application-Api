@@ -1,5 +1,6 @@
 package com.BlogApplication.Payload;
-import java.util.List     ;
+
+import java.util.List;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,5 @@ public class PostResponse {
 	private long totalElements;
 	private int totalPages;
 	private boolean lastPage;
-	
+
 }
