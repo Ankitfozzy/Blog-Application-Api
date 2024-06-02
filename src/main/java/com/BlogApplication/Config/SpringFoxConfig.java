@@ -1,4 +1,4 @@
-package com.BlogApplication;
+package com.BlogApplication.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +18,4 @@ public class SpringFoxConfig {
 				.paths(PathSelectors.any()).build();
 	}
 	
-	@Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }
