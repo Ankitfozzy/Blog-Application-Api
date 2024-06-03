@@ -1,5 +1,6 @@
 package com.BlogApplication.Exceptions;
 
+@SuppressWarnings("serial")
 public class ResourceNotFoundException extends RuntimeException {
 
 	String resourceName;

@@ -2,9 +2,6 @@ package com.BlogApplication.Payload;
 
 import java.util.Date;
 
-import com.BlogApplication.Entity.Category;
-import com.BlogApplication.Entity.User;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

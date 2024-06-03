@@ -2,7 +2,6 @@ package com.BlogApplication.Service;
 
 import java.util.List;
 
-import com.BlogApplication.Entity.Post;
 import com.BlogApplication.Payload.PostDto;
 import com.BlogApplication.Payload.PostResponse;
 

@@ -26,12 +26,14 @@ public class CategoryController {
 	@Autowired
 	private CategoryService categoryService;
 
+	// POST-create category
 	@PostMapping("/")
 	public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) {
 		CategoryDto createCategory = this.categoryService.createCategory(categoryDto);
 		return new ResponseEntity<CategoryDto>(createCategory, HttpStatus.CREATED);
 	}
 
+	// PUT-update category
 	@PutMapping("/{categoryId}")
 	public ResponseEntity<CategoryDto> updateCategory(@Valid @RequestBody CategoryDto categoryDto,
 			@PathVariable Integer categoryId) {

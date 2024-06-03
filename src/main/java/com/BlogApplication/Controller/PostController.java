@@ -27,6 +27,7 @@ public class PostController {
 	@Autowired
 	private PostService postService;
 
+	// POST-create post
 	@PostMapping("{/user/{userId}/category/{categoryId}/posts}")
 	public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto, @PathVariable Integer userId,
 			@PathVariable Integer categoryId) {
@@ -34,36 +35,42 @@ public class PostController {
 		return new ResponseEntity<PostDto>(createdPost, HttpStatus.CREATED);
 	}
 
+	// GET-post by user
 	@GetMapping("/user/{userId}/posts")
 	public ResponseEntity<List<PostDto>> getPostsByUser(@PathVariable Integer userId) {
 		List<PostDto> posts = this.postService.getPostsByUser(userId);
 		return new ResponseEntity<List<PostDto>>(posts, HttpStatus.OK);
 	}
 
+	// GET-post by category
 	@GetMapping("/category/{categoryId}/posts")
 	public ResponseEntity<List<PostDto>> getPostsByCategory(@PathVariable Integer categoryId) {
 		List<PostDto> posts = this.postService.getPostsByCategory(categoryId);
 		return new ResponseEntity<List<PostDto>>(posts, HttpStatus.OK);
 	}
 
+	// GET-post by id
 	@GetMapping("/posts/{postId}")
 	public ResponseEntity<PostDto> getPostById(@PathVariable Integer postId) {
 		PostDto allPost = this.postService.getPostById(postId);
 		return new ResponseEntity<PostDto>(allPost, HttpStatus.ACCEPTED);
 	}
 
+	// DELETE-delete post
 	@DeleteMapping("/posts/{postId}")
 	public ApiResponse deletePost(@PathVariable Integer postId) {
 		this.postService.deletePost(postId);
 		return new ApiResponse("Post is successfully deleted !", true);
 	}
 
+	// PUT-update post
 	@PutMapping("/posts/{postId}")
 	public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto, @PathVariable Integer postId) {
 		PostDto updatedPost = this.postService.updatePost(postDto, postId);
 		return new ResponseEntity<PostDto>(updatedPost, HttpStatus.OK);
 	}
 
+	// GET-all post
 	@GetMapping("/posts")
 	public ResponseEntity<PostResponse> getAllPost(
 			@RequestParam(value = "pageNumber", defaultValue = AppConstants.Page_Number, required = false) Integer pageNumber,
@@ -75,6 +82,7 @@ public class PostController {
 		return new ResponseEntity<PostResponse>(allPost, HttpStatus.OK);
 	}
 
+	// GET-search post
 	@GetMapping("/posts/search/{keyword}")
 	public ResponseEntity<List<PostDto>> searchPosts(@PathVariable("keyword") String keyword) {
 		List<PostDto> result = this.postService.searchPosts(keyword);
