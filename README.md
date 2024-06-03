@@ -6,7 +6,6 @@ The Blog Application API is a Java-based backend system that provides a set of R
 
 - User authentication and authorization
 - Create, read, update, and delete blog posts
-- Commenting system for blog posts
 - User management, including registration and profile updates
 - Error handling and graceful error responses
 - Secure data storage and access control
